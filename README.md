@@ -48,6 +48,6 @@ platform :ios do
   error do |lane, exception|
    UI.error("Lane [#{lane}] Threw Exception: #{exception}")
    cleanup_build # Keep in mind if you have other lanes, they may not need cleanup!
- end
+  end
 end
 ```
