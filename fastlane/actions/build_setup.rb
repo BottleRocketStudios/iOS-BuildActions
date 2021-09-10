@@ -65,13 +65,15 @@ module Fastlane
       end
 
       # Helper
+
+      # Extract the password for a given '.p12' certificate
       def self.get_certificate_password(certificate_source, certificate_name)
         certificate_basename = File.basename(certificate_name, ".p12")
         certificate_passfile_name = certificate_basename + ".pass"
         certificate_passfile_path = File.join(certificate_source, certificate_passfile_name)
 
         if File.exist?(certificate_passfile_path)
-          return File.read(certificate_passfile_path).chomp
+          File.read(certificate_passfile_path).chomp
         else
           UI.user_error!("Failed to find a .pass file for #{certificate_name}. To fix this, create a file at #{certificate_passfile_path} with the contents set to the password for #{certificate_name}.")
         end
