@@ -11,13 +11,20 @@ This project contains three custom Fastlane actions:
 ## Usage
 You can link this project with your existing Fastfile using the `import_from_git` action. You don't need to clone this repo or install it anywhere in your project. An example usage inside a `Fastfile` is below. There are two main ways to properly utilize these actions and account for build failures - and both examples are below. The exception handling is not explicitly *required*, but it should be present so cleanup can be done even in the case of a build failure.
 
+
+Import BuildActions at the top of the Fastfile:
+
 ```ruby
 default_platform(:ios)
 import_from_git(url: "git@github.com:BottleRocketStudios/iOS-BuildActions.git")
+```
 
+
+Option 1 - Use `begin` - `rescue`:
+
+```ruby
 platform :ios do
 
-  # Use begin-rescue
   lane :buildExample do
     begin
       build_setup(
@@ -33,8 +40,15 @@ platform :ios do
       raise exception
     end    
   end
+end
+```
 
-  # Use an `error` lane
+
+Option 2 - Use an `error lane`:
+
+```ruby
+platform :ios do
+
   lane :buildExample2 do
     build_setup(
       certificate_names: ["Certificate1.p12"],

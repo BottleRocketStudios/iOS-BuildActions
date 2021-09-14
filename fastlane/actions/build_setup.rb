@@ -88,7 +88,8 @@ module Fastlane
       end
 
       def self.authors
-        ["Pranjal Satija - @pranjalsatija on GitHub"]
+        ["Pranjal Satija - @pranjalsatija on GitHub",
+         "Will McGinty - @wmcginty on GitHub"]
       end
 
       def self.available_options

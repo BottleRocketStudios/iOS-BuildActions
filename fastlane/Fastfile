@@ -9,6 +9,8 @@
 #
 #     https://docs.fastlane.tools/plugins/available-plugins
 #
+# This Fastfile is available to all builds that import the BuildActions plugin.
+# A default implementation for generating a Veracode build is provided and made available via the 'buildVeracode' lane (including default error handling) or via 'buildVeracodeCore' (without default error handling).
 
 platform :ios do
 
