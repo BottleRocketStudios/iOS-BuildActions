@@ -33,7 +33,7 @@ module Fastlane
           default_keychain: false,
           password: keychain_password,
           path: keychain_path,
-          timeout: false,
+          timeout: 0,
           unlock: true
         )
         should_log && UI.message("Finished creating keychain at #{keychain_path}.")
