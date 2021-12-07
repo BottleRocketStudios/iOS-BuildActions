@@ -67,7 +67,7 @@ platform :ios do
      synology_transfer(
        destination_url: options[:destination_url],
        project_name: options[:project_name],
-       identifier: build_number
+       identifier: options[:build_number]
      )
    end
 end
