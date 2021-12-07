@@ -10,18 +10,19 @@ module Fastlane
       # Run
       def self.run(params)
         destination_url = params[:destination_url]
-        destination_uri = URI(destination_url)
-        destination_host = destination_uri.hostname + destination_uri.path
+        # destination_uri = URI(destination_url)
+        # destination_host = destination_uri.hostname + destination_uri.path
+        destination_host = destination_url
 
-        sh "mount | grep '#{destination_host}'" do |status, output, command|
-          if output.empty?
-            UI.message("Synology (#{destination_host}) is not mounted. Unable to transfer artifacts.")
-          else
-            UI.message("Synology (#{destination_host}) is mounted.")
+        # sh "mount | grep '#{destination_host}'" do |status, output, command|
+        #   if output.empty?
+        #     UI.message("Synology (#{destination_host}) is not mounted. Unable to transfer artifacts.")
+        #   else
+        #     UI.message("Synology (#{destination_host}) is mounted.")
             copy_artifacts(destination_host, params[:project_name], params[:export_kind], params[:identifier])
-          end
-        end
-      end
+      #     end
+      #   end
+      # end
 
       # Helper
 

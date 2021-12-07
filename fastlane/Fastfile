@@ -64,10 +64,14 @@ platform :ios do
    end
 
    lane :synology do |options|
+     destination_url = options[:destination_url] || UI.user_error!("Please provide a 'destination_url' to which build artifacts will be transferred.")
+     project_name = options[:project_name] || UI.user_error!("Please provide a 'project_name' to which build artifacts will be transferred.")
+     build_number = options[:build_number] || ENV["BUILD_NUMBER"] || UI.user_error!("Please provide a 'build_number' that can be passed to gym in order to generate your Veracode build.")
+
      synology_transfer(
-       destination_url: options[:destination_url],
-       project_name: options[:project_name],
-       identifier: options[:build_number]
+       destination_url: destination_url,
+       project_name: project_name,
+       identifier: build_number
      )
    end
 end
