@@ -19,7 +19,7 @@ module Fastlane
         #     UI.message("Synology (#{destination_host}) is not mounted. Unable to transfer artifacts.")
         #   else
         #     UI.message("Synology (#{destination_host}) is mounted.")
-            copy_artifacts(destination_host, params[:project_name], params[:export_kind], params[:identifier])
+            copy_artifacts(destination_host, params[:project_name], params[:identifier])
       #     end
       #   end
       end
