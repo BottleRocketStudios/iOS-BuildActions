@@ -35,12 +35,15 @@ module Fastlane
         dsym_path = ".build/*.zip"
 
         if File.exist?(ipa_path)
+          UI.message("1 or more .ipa exists. Copying...")
+
           build_artifacts_url = File.join(root_url, project_name, "ios-builds", identifier)
           sh("mkdir -p #{artifact_url}")
 
           sh("cp #{ipa_path} #{build_artifacts_url} || true")
 
           if File.exist?(dsym_path)
+            UI.message("1 or more .dsym exists. Copying...")
             sh("cp #{dsym_path} #{build_artifacts_url} || true")
           end
         end
