@@ -42,7 +42,6 @@ platform :ios do
        )
 
        UI.success "Created Veracode bca file at '#{bca_payload_path}'"
-
        # TODO: Create a custom action that will handle the uploading of the .bca file to Veracode
    end
 
@@ -66,7 +65,7 @@ platform :ios do
    lane :synology do |options|
      destination_url = options[:destination_url] || UI.user_error!("Please provide a 'destination_url' to which build artifacts will be transferred.")
      project_name = options[:project_name] || UI.user_error!("Please provide a 'project_name' to which build artifacts will be transferred.")
-     identifier = options[:identifier] || ENV["BUILD_NUMBER"] || UI.user_error!("Please provide an 'identifier' which can be associated with the transferred artifacts (ex: build number)")
+     identifier = options[:identifier] || "#{git_branch}/#{ENV["BUILD_NUMBER"]}" || UI.user_error!("Please provide an 'identifier' which can be associated with the transferred artifacts (ex: build number)")
 
      synology_transfer(destination_url: destination_url, project_name: project_name, identifier: identifier)
    end

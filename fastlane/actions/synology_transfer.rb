@@ -1,3 +1,5 @@
+require "fileutils"
+
 module Fastlane
   module Actions
     class SynologyTransferAction < Action
@@ -10,50 +12,52 @@ module Fastlane
       # Run
       def self.run(params)
         destination_url = params[:destination_url]
-        # destination_uri = URI(destination_url)
-        # destination_host = destination_uri.hostname + destination_uri.path
-        destination_host = destination_url
 
-        # sh "mount | grep '#{destination_host}'" do |status, output, command|
-        #   if output.empty?
-        #     UI.message("Synology (#{destination_host}) is not mounted. Unable to transfer artifacts.")
-        #   else
-        #     UI.message("Synology (#{destination_host}) is mounted.")
-            copy_artifacts(destination_host, params[:project_name], params[:identifier])
-      #     end
-      #   end
+        sh "mount | grep '#{destination_url}'" do |status, output, command|
+          if output.empty?
+            UI.message("Synology (#{destination_url}) is not mounted. Unable to transfer artifacts.")
+          else
+            UI.message("Synology (#{destination_url}) is mounted.")
+            copy_build_artifacts(destination_host, params[:project_name], params[:identifier], params[:build_output_directory])
+            copy_test_artifacts(destination_host, params[:project_name], params[:identifier], params[:test_output_directory])
+          end
+        end
       end
+
 
       # Helper
 
-      def self.copy_artifacts(root_url, project_name, identifier)
-        # artifact_url = File.join(root_url, project_name, export_kind == "build" ? "ios-builds" : "ios-tests", identifier)
-
-
-        # Attempt to copy build artifacts to the destination URL
+      def self.copy_build_artifacts(root_url, project_name, identifier, build_output_directory)
         ipa_path = ".build/*.ipa"
         dsym_path = ".build/*.zip"
 
-        if File.exist?(ipa_path)
-          UI.message("1 or more .ipa exists. Copying...")
-
+        if !Dir.glob(ipa_path).empty?
           build_artifacts_url = File.join(root_url, project_name, "ios-builds", identifier)
-          sh("mkdir -p #{artifact_url}")
+          FileUtils.mkdir_p "#{build_artifacts_url}"
 
-          sh("cp #{ipa_path} #{build_artifacts_url} || true")
+          # If any .ipa are present, copy to the destination
+          sh("cp #{ipa_path} #{build_artifacts_url}")
 
-          if File.exist?(dsym_path)
-            UI.message("1 or more .dsym exists. Copying...")
-            sh("cp #{dsym_path} #{build_artifacts_url} || true")
+          if !Dir.glob(dsym_path).empty?
+            # If any .dsym are present, copy to the destination
+            sh("cp #{dsym_path} #{build_artifacts_url}")
           end
         end
-
-        # if include_test_results
-        #   # Attempt to copy any test artifacts to the destination URL
-        #   sh("zip -r fastlane/test_output/TestResults.zip fastlane/test_output || true")
-        #   sh("cp fastlane/test_output/TestResults.zip #{artifact_url} || true")
-        # end
       end
+
+      def self.copy_test_artifacts(root_url, project_name, identifier, test_output_directory)
+        if !Dir.empty?(test_output_directory)
+          # If any test results are present, zip them up and copy to the destination
+
+          test_artifacts_url = File.join(root_url, project_name, "ios-tests", identifier)
+          FileUtils.mkdir_p "#{test_artifacts_url}"
+
+          sh("zip -r #{test_output_directory}/Results.zip #{test_output_directory}")
+          FileUtils.cp("#{test_output_directory}/Results.zip", test_artifacts_url)
+          File.delete("#{test_output_directory}/Results.zip")
+        end
+      end
+
 
       #####################################################
       # @!group Documentation
@@ -84,7 +88,19 @@ module Fastlane
             description: "Any additional identifiers needed for the current set of artifacts (ex: build number or branch)",
             type: String,
             default_value: ""
-          )
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :build_output_directory,
+            description: "The directory in which the build artifacts are stored in",
+            type: String,
+            default_value: ".build"
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :test_output_directory,
+            description: "The directory in which the test artifacts are stored in",
+            type: String,
+            default_value: "fastlane/test_output"
+          ),
         ]
       end
     end
