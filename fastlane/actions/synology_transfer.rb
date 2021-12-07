@@ -28,18 +28,15 @@ module Fastlane
 
       def self.copy_artifacts(root_url, project_name, export_kind, identifier)
         artifact_url = File.join(root_url, project_name, export_kind == "build" ? "ios-builds" : "ios-tests", identifier)
-        UI.message(artifact_url)
-        sh("mkdir -p #{artifact_url}")
 
-        # if export_kind == "build"
-        #   sh("cp .build/*.ipa #{artifact_url} || true")
-        #   sh("cp .build/*.zip #{artifact_url} || true")
-        # else
-        #   sh("zip -r fastlane/test_output/TestResults.zip fastlane/test_output || true")
-        #   sh("cp fastlane/test_output/TestResults.zip #{artifact_url} || true")
-        # end
+        if export_kind == "build"
+          sh("cp .build/*.ipa #{artifact_url} || true")
+          sh("cp .build/*.zip #{artifact_url} || true")
+        else
+          sh("zip -r fastlane/test_output/TestResults.zip fastlane/test_output || true")
+          sh("cp fastlane/test_output/TestResults.zip #{artifact_url} || true")
+        end
       end
-
 
       #####################################################
       # @!group Documentation
@@ -67,7 +64,7 @@ module Fastlane
           ),
           FastlaneCore::ConfigItem.new(
             key: :export_kind,
-            description: "Either 'build' or 'test'",
+            description: "The kind of artifacts to export - either 'build' or 'test'",
             type: String,
             default_value: "build"
           ),
