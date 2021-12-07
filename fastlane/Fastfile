@@ -69,4 +69,5 @@ platform :ios do
        project_name: options[:project_name],
        identifier: build_number
      )
+   end
 end
