@@ -26,17 +26,30 @@ module Fastlane
 
       # Helper
 
-      def self.copy_artifacts(root_url, project_name, export_kind, identifier)
-        artifact_url = File.join(root_url, project_name, export_kind == "build" ? "ios-builds" : "ios-tests", identifier)
-        sh("mkdir -p #{artifact_url}")
+      def self.copy_artifacts(root_url, project_name, identifier)
+        # artifact_url = File.join(root_url, project_name, export_kind == "build" ? "ios-builds" : "ios-tests", identifier)
 
-        if export_kind == "build"
-          sh("cp .build/*.ipa #{artifact_url} || true")
-          sh("cp .build/*.zip #{artifact_url} || true")
-        else
-          sh("zip -r fastlane/test_output/TestResults.zip fastlane/test_output || true")
-          sh("cp fastlane/test_output/TestResults.zip #{artifact_url} || true")
+
+        # Attempt to copy build artifacts to the destination URL
+        ipa_path = ".build/*.ipa"
+        dsym_path = ".build/*.zip"
+
+        if File.exist?(ipa_path)
+          build_artifacts_url = File.join(root_url, project_name, "ios-builds", identifier)
+          sh("mkdir -p #{artifact_url}")
+
+          sh("cp #{ipa_path} #{build_artifacts_url} || true")
+
+          if File.exist?(dsym_path)
+            sh("cp #{dsym_path} #{build_artifacts_url} || true")
+          end
         end
+
+        # if include_test_results
+        #   # Attempt to copy any test artifacts to the destination URL
+        #   sh("zip -r fastlane/test_output/TestResults.zip fastlane/test_output || true")
+        #   sh("cp fastlane/test_output/TestResults.zip #{artifact_url} || true")
+        # end
       end
 
       #####################################################
@@ -62,12 +75,6 @@ module Fastlane
             key: :project_name,
             description: "The name of the project in Synology",
             type: String
-          ),
-          FastlaneCore::ConfigItem.new(
-            key: :export_kind,
-            description: "The kind of artifacts to export, must be either 'build' or 'test'",
-            type: String,
-            default_value: "build"
           ),
           FastlaneCore::ConfigItem.new(
             key: :identifier,
