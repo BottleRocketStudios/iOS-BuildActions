@@ -64,7 +64,7 @@ platform :ios do
    end
 
    lane :synology do |options|
-     synology(
+     synology_transfer(
        destination_url: options[:destination_url],
        project_name: options[:project_name],
        identifier: build_number

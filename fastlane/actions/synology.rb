@@ -1,6 +1,6 @@
 module Fastlane
   module Actions
-    class SynologyAction < Action
+    class SynologyTransferAction < Action
 
       # Support
       def self.is_supported?(platform)
@@ -39,33 +39,6 @@ module Fastlane
         # end
       end
 
-        # //     String FILE_SERVER_PROJECT_URL = "smb://files.bottlerocketstudios.com/Builds/${env.SYNOLOGY_PROJECT_NAME}/ios-builds/"
-        #   //     String FILE_SERVER_BUILD_URL = "${FILE_SERVER_PROJECT_URL}${BUILD_NUMBER}"
-        #   //     String DECODED_JOB_NAME = URLDecoder.decode("${env.JOB_NAME}", 'UTF-8')
-        #   //     String SLACK_MESSAGE = "${DECODED_JOB_NAME} - #${env.BUILD_NUMBER}\nSuccess. Duration: ${currentBuild.durationString} (<${env.BUILD_URL}|Jenkins> | <$FILE_SERVER_BUILD_URL|Artifact> | <$FILE_SERVER_PROJECT_URL|Project>)."
-        #   //     sendSlackWithLogging(SLACK_MESSAGE, 'good')
-
-        # sh """
-        # if mount | grep 'files.bottlerocketstudios.com/Builds' >/dev/null 2>&1; then
-        #   echo "Synology is mounted. Copying test results to Synology"
-        #   mkdir -p ${SYNOLOGY_PATH}
-        #   zip -r fastlane/test_output/TestResults.zip fastlane/test_output
-        #   cp fastlane/test_output/TestResults.zip ${SYNOLOGY_PATH}
-        # else
-        #   echo "Synology is not mounted. Unable to copy test results to Synology."
-        # fi
-        # """
-
-        # sh """
-        # if mount | grep 'files.bottlerocketstudios.com/Builds' >/dev/null 2>&1; then
-        #   echo "Synology is mounted. Copying builds to Synology"
-        #   mkdir -p ${SYNOLOGY_PATH}
-        #   cp .build/*.ipa ${SYNOLOGY_PATH}
-        #   cp .build/*.zip ${SYNOLOGY_PATH}
-        # else
-        #   echo "Synology is not mounted. Unable to copy builds to Synology."
-        # fi
-        # """
 
       #####################################################
       # @!group Documentation
