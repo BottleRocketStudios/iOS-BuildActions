@@ -22,7 +22,7 @@ module Fastlane
             copy_artifacts(destination_host, params[:project_name], params[:export_kind], params[:identifier])
       #     end
       #   end
-      # end
+      end
 
       # Helper
 
