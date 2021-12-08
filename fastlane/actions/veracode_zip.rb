@@ -10,7 +10,7 @@ module Fastlane
       # Run
       def self.run(params)
         xcarchive_path = params[:xcarchive_path]
-        output_name = File.sanitize(params[:output_name])
+        output_name = sanitize(params[:output_name])
 
         Dir.chdir("#{xcarchive_path}") do
             payload_path = "../#{output_name}.zip"
@@ -21,6 +21,20 @@ module Fastlane
             # Return the path to the created .bca file
             final_payload_path
         end
+      end
+
+
+      # Helper
+
+      def self.sanitize(filename)
+        # Bad as defined by wikipedia: https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
+        # Adapted from: http://gavinmiller.io/2016/creating-a-secure-sanitization-function/
+        block_list = ['/', '\\', '?', '%', '*', ':', '|', '"', '<', '>', '.', ' ']
+        block_list.each do |char|
+          filename.gsub!(char, '_')
+        end
+
+        filename
       end
 
       #####################################################
