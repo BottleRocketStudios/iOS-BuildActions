@@ -85,12 +85,6 @@ module Fastlane
             type: String
           ),
           FastlaneCore::ConfigItem.new(
-            key: :verify_mounted,
-            description: "Specify whether the action should verify that the destination URL is mounted before attempting transfer",
-            default_value: true,
-            type: Boolean
-          ),
-          FastlaneCore::ConfigItem.new(
             key: :project_name,
             description: "The name of the project in Synology",
             type: String
@@ -100,6 +94,12 @@ module Fastlane
             description: "Any additional identifiers needed for the current set of artifacts (ex: build number or branch)",
             type: String,
             optional: true
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :verify_mounted,
+            description: "Specify whether the action should verify that the destination URL is mounted before attempting transfer",
+            default_value: true,
+            type: Boolean
           ),
           FastlaneCore::ConfigItem.new(
             key: :build_output_directory,
