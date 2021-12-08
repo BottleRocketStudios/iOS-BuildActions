@@ -14,7 +14,7 @@ module Fastlane
 
         Dir.chdir("#{xcarchive_path}") do
             payload_path = "../#{output_name}.zip"
-            sh("zip -r #{payload_path}")
+            sh("zip -r #{payload_path} $(ls)")
 
             final_payload_path = File.expand_path(payload_path)
 
