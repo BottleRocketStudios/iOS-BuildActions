@@ -10,8 +10,7 @@ module Fastlane
       # Run
       def self.run(params)
         xcarchive_path = params[:xcarchive_path]
-        output_name = params[:output_name]
-        UI.message(output_name)
+        output_name = File.sanitize(params[:output_name])
 
         Dir.chdir("#{xcarchive_path}") do
             payload_path = "../#{output_name}.zip"
