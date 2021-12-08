@@ -20,6 +20,7 @@ platform :ios do
        config = options[:config] || "Debug"
        build_number = options[:build_number] || ENV["BUILD_NUMBER"] || UI.user_error!("Please provide a 'build_number' that can be passed to gym in order to generate your Veracode build.")
        output_name = "#{scheme}_Veracode_#{build_number}"
+       UI.message(output_name)
 
        # Use gym to generate a debug build with appropriate build settings for Veracode
        # See https://help.veracode.com/reader/4EKhlLSMHm5jC8P8j3XccQ/PJWz14TuPBwScC2EpJtB2Q for more information
