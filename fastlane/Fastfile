@@ -31,19 +31,17 @@ platform :ios do
                             archive_path: "./.build/#{output_name}",
                             derived_data_path: "./dd",
                             skip_package_ipa: true,
-                            xcargs: "DEBUG_INFORMATION_FORMAT='dwarf-with-dsym' ENABLE_BITCODE='YES'",
-                            export_method: "development")
+                            xcargs: "DEBUG_INFORMATION_FORMAT='dwarf-with-dsym' ENABLE_BITCODE='YES'")
 
        UI.message "xcarchive created at: '#{xcarchive_path}'"
 
-       # # Convert the xcarchive into a .bca file suitable for upload to Veracode
-       # bca_payload_path = generate_veracode_bca(
-       #     xcarchive_path: xcarchive_path,
-       #     output_name: output_name
-       # )
-       #
-       # UI.success "Created Veracode bca file at '#{bca_payload_path}'"
+       # Convert the xcarchive into a .zip file suitable for upload to Veracode
+       payload_path = _veracode_zip(
+           xcarchive_path: xcarchive_path,
+           output_name: output_name
+       )
 
+       UI.success "Created Veracode zip file at '#{payload_path}'"
        # TODO: Create a custom action that will handle the uploading of the .bca file to Veracode
    end
 end
