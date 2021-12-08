@@ -17,8 +17,8 @@ module Fastlane
           if output.empty? && params[:verify_mounted]
             UI.message("Synology (#{destination_url}) is not mounted. Unable to transfer artifacts.")
           else
-            copy_build_artifacts(destination_url, params[:project_name], params[:identifier], params[:build_output_directory], params[:build_output_types])
-            copy_test_artifacts(destination_url, params[:project_name], params[:identifier], params[:test_output_directory], params[:test_artifact_name])
+            copy_build_artifacts(params[:build_output_types], params[:build_output_directory], destination_url, params[:project_name], params[:identifier])
+            copy_test_artifacts(params[:test_output_directory], destination_url, params[:project_name], params[:identifier], params[:test_artifact_name])
           end
         end
       end
@@ -26,24 +26,26 @@ module Fastlane
 
       # Helper
 
-      def self.copy_build_artifacts(root_url, project_name, identifier, build_output_directory, build_output_types)
+      # Searches for all desired build artifacts present in the output directory, before copying them to the appropriate destination in Synology
+      def self.copy_build_artifacts(build_output_types, build_output_directory, destination_url, project_name, identifier)
         build_output_types.each do |ext|
           source = File.join(build_output_directory, "*.#{ext}")
           if !Dir.glob(source).empty?
 
             # If any are present, create the root directory for output and copy them to the destination
-            build_artifacts_url = File.join(root_url, project_name, "ios-builds", identifier)
+            build_artifacts_url = File.join(destination_url, project_name, "ios-builds", identifier)
             FileUtils.mkdir_p(build_artifacts_url)
             copy_all_matching(source, build_artifacts_url)
           end
         end
       end
 
-      def self.copy_test_artifacts(root_url, project_name, identifier, test_output_directory, test_artifact_name)
+      # Searches for any test results in the output directory, before zipping and copying them to the appropriate destination in Synology
+      def self.copy_test_artifacts(test_output_directory, destination_url, project_name, identifier, test_artifact_name)
         if !Dir.empty?(test_output_directory)
 
           # If any test results are present, create the root directory for output, zip them up and copy to the destination
-          test_artifacts_url = File.join(root_url, project_name, "ios-tests", identifier)
+          test_artifacts_url = File.join(destination_url, project_name, "ios-tests", identifier)
           FileUtils.mkdir_p(test_artifacts_url)
 
           archive_path = File.join(test_output_directory, "#{test_artifact_name}.zip")
@@ -53,6 +55,7 @@ module Fastlane
         end
       end
 
+      # Copies all files matching a wildcard path into the destination directory
       def self.copy_all_matching(source, destination_directory)
         Dir.glob(source).select { |f| File.file?(f) }.each do |file|
           destination_path = File.join(destination_directory, File.basename(file))
