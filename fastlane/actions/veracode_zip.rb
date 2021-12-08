@@ -16,9 +16,8 @@ module Fastlane
             payload_path = "../#{output_name}.zip"
             sh("zip -r #{payload_path} $(ls)")
 
+# Return the path to the created .bca file
             final_payload_path = File.expand_path(payload_path)
-
-            # Return the path to the created .bca file
             final_payload_path
         end
       end
@@ -26,6 +25,7 @@ module Fastlane
 
       # Helper
 
+      # Attempts to sanitize the output name in the case it contains reserved characters
       def self.sanitize(filename)
         # Bad as defined by wikipedia: https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
         # Adapted from: http://gavinmiller.io/2016/creating-a-secure-sanitization-function/
