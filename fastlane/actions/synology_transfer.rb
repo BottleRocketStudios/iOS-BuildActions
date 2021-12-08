@@ -96,11 +96,11 @@ module Fastlane
             key: :identifier,
             description: "Any additional identifiers needed for the current set of artifacts (ex: build number or branch)",
             type: String,
-            default_value: ""
+            optional: true
           ),
           FastlaneCore::ConfigItem.new(
             key: :build_output_directory,
-            description: "The directory in which the build artifacts are stored in",
+            description: "The directory in which the build artifacts are stored in after the build process",
             type: String,
             default_value: ".build"
           ),
