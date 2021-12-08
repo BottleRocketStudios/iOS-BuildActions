@@ -16,7 +16,7 @@ module Fastlane
             payload_path = "../#{output_name}.zip"
             sh("zip -r #{payload_path} $(ls)")
 
-# Return the path to the created .bca file
+            # Return the path to the created .bca file
             final_payload_path = File.expand_path(payload_path)
             final_payload_path
         end

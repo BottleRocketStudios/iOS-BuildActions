@@ -20,7 +20,6 @@ platform :ios do
        config = options[:config] || "Debug"
        build_number = options[:build_number] || ENV["BUILD_NUMBER"] || UI.user_error!("Please provide a 'build_number' that can be passed to gym in order to generate your Veracode build.")
        output_name = "#{scheme}_Veracode_#{build_number}"
-       UI.message(output_name)
 
        # Use gym to generate a debug build with appropriate build settings for Veracode
        # See https://help.veracode.com/reader/4EKhlLSMHm5jC8P8j3XccQ/PJWz14TuPBwScC2EpJtB2Q for more information
@@ -30,11 +29,11 @@ platform :ios do
                             clean: true,
                             output_directory: "./.build",
                             archive_path: "./.build/#{output_name}",
-                            derived_data_path: "./dd",
+                            derived_data_path: "./.dd",
                             skip_package_ipa: true,
                             xcargs: "DEBUG_INFORMATION_FORMAT='dwarf-with-dsym' ENABLE_BITCODE='YES'")
 
-       UI.message "xcarchive created at: '#{xcarchive_path}'"
+       UI.message "Created .xcarchive at: '#{xcarchive_path}'"
 
        # Convert the xcarchive into a .zip file suitable for upload to Veracode
        payload_path = _veracode_zip(
@@ -42,7 +41,7 @@ platform :ios do
            output_name: output_name
        )
 
-       UI.success "Created Veracode zip file at '#{payload_path}'"
+       UI.success "Created Veracode zip file at: '#{payload_path}'"
        # TODO: Create a custom action that will handle the uploading of the .bca file to Veracode
    end
 end
