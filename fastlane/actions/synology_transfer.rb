@@ -15,6 +15,7 @@ module Fastlane
 
         UI.message("message: #{params[:verify_mounted]}")
         sh "mount | grep '#{destination_url}'" do |status, output, command|
+          UI.message("status: #{status}")
           if output.empty? && params[:verify_mounted]
             UI.message("Synology (#{destination_url}) is not mounted. Unable to transfer artifacts.")
           else
