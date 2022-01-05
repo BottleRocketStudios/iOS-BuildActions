@@ -27,6 +27,8 @@ module Fastlane
 
       # Searches for all desired build artifacts present in the output directory, before copying them to the appropriate destination in Synology
       def self.copy_build_artifacts(build_output_types, build_output_directory, destination_url, project_name, identifier)
+        UI.message("Copying build artifacts for #{identifier} ...")
+
         if File.directory?(build_output_directory)
           build_output_types.each do |ext|
             source = File.join(build_output_directory, "*.#{ext}")
@@ -43,6 +45,8 @@ module Fastlane
 
       # Searches for any test results in the output directory, before zipping and copying them to the appropriate destination in Synology
       def self.copy_test_artifacts(test_output_directory, destination_url, project_name, identifier, test_artifact_name)
+        UI.message("Copying test artifacts for #{identifier} ...")
+
         if File.directory?(test_output_directory) && !Dir.empty?(test_output_directory)
 
           # If any test results are present, create the root directory for output, zip them up and copy to the destination
