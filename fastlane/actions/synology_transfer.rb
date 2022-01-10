@@ -12,7 +12,6 @@ module Fastlane
       # Run
       def self.run(params)
         destination_url = params[:destination_url]
-
         sh "mount | grep '#{destination_url}'" do |status, output, command|
           if output.empty? && params[:verify_mounted]
             UI.message("Synology (#{destination_url}) is not mounted. Unable to transfer artifacts.")
@@ -28,21 +27,27 @@ module Fastlane
 
       # Searches for all desired build artifacts present in the output directory, before copying them to the appropriate destination in Synology
       def self.copy_build_artifacts(build_output_types, build_output_directory, destination_url, project_name, identifier)
-        build_output_types.each do |ext|
-          source = File.join(build_output_directory, "*.#{ext}")
-          if !Dir.glob(source).empty?
+        UI.message("Copying build artifacts for #{identifier} ...")
 
-            # If any are present, create the root directory for output and copy them to the destination
-            build_artifacts_url = File.join(destination_url, project_name, "ios-builds", identifier)
-            FileUtils.mkdir_p(build_artifacts_url)
-            copy_all_matching(source, build_artifacts_url)
+        if File.directory?(build_output_directory)
+          build_output_types.each do |ext|
+            source = File.join(build_output_directory, "*.#{ext}")
+            if !Dir.glob(source).empty?
+
+              # If any are present, create the root directory for output and copy them to the destination
+              build_artifacts_url = File.join(destination_url, project_name, "ios-builds", identifier)
+              FileUtils.mkdir_p(build_artifacts_url)
+              copy_all_matching(source, build_artifacts_url)
+            end
           end
         end
       end
 
       # Searches for any test results in the output directory, before zipping and copying them to the appropriate destination in Synology
       def self.copy_test_artifacts(test_output_directory, destination_url, project_name, identifier, test_artifact_name)
-        if !Dir.empty?(test_output_directory)
+        UI.message("Copying test artifacts for #{identifier} ...")
+
+        if File.directory?(test_output_directory) && !Dir.empty?(test_output_directory)
 
           # If any test results are present, create the root directory for output, zip them up and copy to the destination
           test_artifacts_url = File.join(destination_url, project_name, "ios-tests", identifier)
