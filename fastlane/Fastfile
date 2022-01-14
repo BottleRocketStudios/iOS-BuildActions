@@ -15,7 +15,7 @@
 platform :ios do
 
    desc "Contains the core logic for generating and converting a build into a format suitable for upload to Veracode. Must provide a scheme (defaults to ENV['SCHEME']), config (defaults to 'Debug'), and build number (defaults to ENV['BUILD_NUMBER'])."
-   lane :buildVeracodeCore do |options|
+   lane :buildVeracodeArchive do |options|
        scheme = options[:scheme] || ENV["SCHEME"] || UI.user_error!("Please provide a 'scheme' that can be passed to gym in order to generate your Veracode build.")
        config = options[:config] || "Debug"
        build_number = options[:build_number] || ENV["BUILD_NUMBER"] || UI.user_error!("Please provide a 'build_number' that can be passed to gym in order to generate your Veracode build.")
@@ -29,43 +29,27 @@ platform :ios do
                             clean: true,
                             output_directory: "./.build",
                             archive_path: "./.build/#{output_name}",
-                            derived_data_path: "./dd",
+                            derived_data_path: "./.dd",
                             skip_package_ipa: true,
                             xcargs: "DEBUG_INFORMATION_FORMAT='dwarf-with-dsym' ENABLE_BITCODE='YES'")
 
-       UI.message "xcarchive created at: '#{xcarchive_path}'"
+       UI.message "Created .xcarchive at: '#{xcarchive_path}'"
 
-       # Convert the xcarchive into a .bca file suitable for upload to Veracode
-       bca_payload_path = generate_veracode_bca(
+       # Convert the xcarchive into a .zip file suitable for upload to Veracode
+       payload_path = _veracode_zip(
            xcarchive_path: xcarchive_path,
            output_name: output_name
        )
 
-       UI.success "Created Veracode bca file at '#{bca_payload_path}'"
-       # TODO: Create a custom action that will handle the uploading of the .bca file to Veracode
-   end
-
-   desc "Wraps the 'buildVeracodeCore' lane in keychain setup/cleanup with proper error handling logic."
-   lane :buildVeracode do |options|
-       scheme = options[:scheme]
-       config = options[:config]
-       build_number = options[:build_number]
-
-       setup
-       begin
-           buildVeracodeCore(scheme: scheme, config: config, build_number: build_number)
-       rescue => exception
-           cleanup
-           raise exception
-       else
-           cleanup
-       end
+       UI.success "Created Veracode zip file at: '#{payload_path}'"
+       # TODO: Create a custom action that will handle the uploading of the .zip file to Veracode
    end
 
    lane :synology do |options|
+     build_number = options[:build_number] || ENV["BUILD_NUMBER"]
      destination_url = options[:destination_url] || UI.user_error!("Please provide a 'destination_url' to which build artifacts will be transferred.")
      project_name = options[:project_name] || UI.user_error!("Please provide a 'project_name' to which build artifacts will be transferred.")
-     identifier = options[:identifier] || "#{git_branch}/#{ENV["BUILD_NUMBER"]}" || UI.user_error!("Please provide an 'identifier' which can be associated with the transferred artifacts (ex: build number)")
+     identifier = options[:identifier] || "#{git_branch}/#{build_number}" || UI.user_error!("Please provide an 'identifier' which can be associated with the transferred artifacts (ex: build number)")
 
      synology_transfer(
        destination_url: destination_url,
